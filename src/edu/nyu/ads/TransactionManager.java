@@ -3,6 +3,7 @@ import java.util.*;
 import java.io.*;
 public class TransactionManager {
 
+	Map<Variable,Site> varToSite;
 	Map<Integer,Site> sites;
 	Map<String,Transaction> transactions;
 	Set<Transaction> activeTransactions;

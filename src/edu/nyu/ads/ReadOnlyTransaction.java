@@ -2,8 +2,8 @@ package edu.nyu.ads;
 
 public class ReadOnlyTransaction extends Transaction {
 
-	ReadOnlyTransaction(String name, String id, int timestamp, String type) {
-		super(name, id, timestamp, type);
+	ReadOnlyTransaction(String name, int timestamp) {
+		super(name, timestamp, TransactionType.ReadOnly);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -29,6 +29,12 @@ public class ReadOnlyTransaction extends Transaction {
 	boolean commit() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	void block() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

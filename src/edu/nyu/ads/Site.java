@@ -15,12 +15,12 @@ public class Site {
      * @param siteNumber
      * @param variables
      */
-    public Site(int siteNumber,Map<String,Variable> variables){
+    public Site(int siteNumber,Map<String,Variable> variables,HashMap<String,Transaction> lockTable){
     		this.siteNumber=siteNumber;
     		this.variables=new HashMap<String,Variable>(variables);
     		this.variablesBackup=new HashMap<String,Variable>(variables);
     		this.fail=false;
-    		this.lockTable= new HashMap<String,Transaction>();
+    		this.lockTable=lockTable;//shallow copy, also passed to the lockManager..
     		isReadable=new HashMap<String,Boolean>();
     		for(String variable:variables.keySet()){
     			isReadable.put(variable, true);

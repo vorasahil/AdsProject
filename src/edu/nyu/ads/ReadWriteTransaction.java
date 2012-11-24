@@ -2,8 +2,8 @@ package edu.nyu.ads;
 
 public class ReadWriteTransaction extends Transaction {
 
-	ReadWriteTransaction(String name, String id, int timestamp, String type) {
-		super(name, id, timestamp, type);
+	ReadWriteTransaction(String name,  int timestamp) {
+		super(name,timestamp, TransactionType.ReadWrite);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -29,6 +29,12 @@ public class ReadWriteTransaction extends Transaction {
 	boolean commit() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	void block() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
