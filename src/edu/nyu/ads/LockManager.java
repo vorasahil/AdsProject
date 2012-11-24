@@ -12,9 +12,6 @@ public class LockManager {
 	}
 	
 	String getLock(Transaction t,String variable){
-		
-		
-		
 		return "";
 		
 	}
