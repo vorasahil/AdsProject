@@ -36,8 +36,11 @@ public class Site {
     boolean lock(String variable, Transaction t){
          	if(!variable.contains(variable))
          		throw new IllegalStateException("Does not contain that variable");
-    		if(lockTable.containsKey(variable))
+    		if(lockTable.containsKey(variable)){
+    			if(lockTable.get(variable).equals(t))
+    				return true;
          		return false;
+         	}
          	else{
          		lockTable.put(variable,t);
          		return true;
