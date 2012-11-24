@@ -25,5 +25,13 @@ public abstract class Transaction {
 	abstract int  read (String variable);
 	abstract void write(String variable, int value);
 	abstract Map<String,String> end();
+
+	public int getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(int timestamp) {
+		this.timestamp = timestamp;
+	}
 	
 }

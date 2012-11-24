@@ -11,8 +11,23 @@ public class LockManager {
 		locks.add(lockTable);
 	}
 	
-	String getLock(Transaction t,String variable){
-		return "";
+	Status getLock(Transaction t,String variable){
+		
+		for(HashMap<String,Transaction> lockTable : locks){
+			if(lockTable.containsKey(variable)){
+				Transaction temp = lockTable.get(variable);
+				if(temp.getTimestamp() > t.getTimestamp()){
+					return Status.Block;
+				}
+			}
+			
+			else{
+				return Status.Abort;
+			}
+		}
+		
+		return Status.GetLock;
+		
 		
 	}
 }
