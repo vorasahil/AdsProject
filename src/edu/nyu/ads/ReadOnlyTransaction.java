@@ -1,40 +1,33 @@
 package edu.nyu.ads;
-
+import java.util.*;
 public class ReadOnlyTransaction extends Transaction {
 
-	ReadOnlyTransaction(String name, int timestamp) {
+	Map<String,Variable> variables;
+	ReadOnlyTransaction(String name, int timestamp,Map<String,Variable>variables) {
 		super(name, timestamp, TransactionType.ReadOnly);
-		// TODO Auto-generated constructor stub
+		this.variables=new HashMap<String,Variable>(variables);	
+	}
+	
+	@Override
+	int read(String variable) {
+		return variables.get(variable).getValue();
 	}
 
 	@Override
-	int read(Variable v, Site site) {
-		// TODO Auto-generated method stub
-		return 0;
+	void write(String variable, int value) {
+		throw new UnsupportedOperationException("Read Only Transaction Cannot Write!");
 	}
 
-	@Override
-	boolean write(Variable variable, int value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	boolean abort() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	boolean commit() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	@Override
 	void block() {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Read Only Transaction Cannot Block!");	
+	}
+
+	@Override
+	Map<String, String> end() {
+		return null;
 	}
 
 }

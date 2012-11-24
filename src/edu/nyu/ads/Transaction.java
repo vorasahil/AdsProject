@@ -22,9 +22,8 @@ public abstract class Transaction {
 	}
 	
 	abstract void block();
-	abstract int  read (Variable v,Site site);
-	abstract boolean write(Variable variable, int value);
-	abstract boolean abort ();
-	abstract boolean commit ();
+	abstract int  read (String variable);
+	abstract void write(String variable, int value);
+	abstract Map<String,String> end();
 	
 }

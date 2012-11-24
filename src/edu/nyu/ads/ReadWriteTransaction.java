@@ -1,40 +1,38 @@
 package edu.nyu.ads;
-
+import java.util.*;
 public class ReadWriteTransaction extends Transaction {
 
+	Map<String,String> touchedVariables;
 	ReadWriteTransaction(String name,  int timestamp) {
 		super(name,timestamp, TransactionType.ReadWrite);
-		// TODO Auto-generated constructor stub
+		touchedVariables=new HashMap<String,String>();
 	}
 
 	@Override
-	int read(Variable v, Site site) {
-		// TODO Auto-generated method stub
+	int read(String variable) {
+		if(!touchedVariables.containsKey(variable))
+		{
+			touchedVariables.put(variable,"Read");
+		}
 		return 0;
 	}
 
 	@Override
-	boolean write(Variable variable, int value) {
-		// TODO Auto-generated method stub
-		return false;
+	void write(String variable, int value) {
+		touchedVariables.put(variable,"Write");
+
 	}
 
-	@Override
-	boolean abort() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	boolean commit() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	void block() {
 		// TODO Auto-generated method stub
-		
+		this.state=TransactionState.Blocked;
+	}
+
+	@Override
+	Map<String, String> end() {
+		return Collections.unmodifiableMap(this.touchedVariables);
 	}
 
 }
