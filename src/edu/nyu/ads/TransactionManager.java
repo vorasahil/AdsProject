@@ -80,37 +80,48 @@ public class TransactionManager {
 	}
 	
 	void dump(int timestamp){
-		out.println("DUMP AT TIMESTAMP= "+timestamp);
-		Map<String,Variable> variables=new HashMap<String,Variable>();
-		for(String var:varToSite.keySet()){
-			
-			List<Site> siteList=varToSite.get(var);
-			
-			FOR: for(Site sit:siteList){
-				if(sit.isUp()){
-					Variable v=null;
-					try{
-						v=sit.readVariable(var);	
-					}
-					catch(IllegalStateException e){
-					continue;
-					}
-					variables.put(v.getName(),v);
-					break FOR;
-				}
-				
-			}
-		
+		out.println("COMPLETE DUMP AT TIMESTAMP= "+timestamp);
+		for(Integer siteNum:sites.keySet()){
+			dump(siteNum);
 		}
+		
 	}
 	
 	
-	void dump(int site,int timestamp){
-		System.out.println("dumpsite"+site);
+	void dump(int siteNum,int timestamp){
+		out.println("DUMPing Site= "+siteNum+" at TimeStamp "+timestamp);
+		
+			Site site=sites.get(siteNum);
+			if(site.isUp()){
+				out.println(siteNum+" variables are as follows:");
+				out.println(site.dump());
+			}
+			else{
+				out.println(siteNum+" is DOWN.");
+			}
+			
 	}
 	
 	void dump(String variable,int timestamp){
-		System.out.println("dumpvariable"+variable);
+		out.println("Dumping Variable "+variable+" at timestamp"+timestamp);
+		List<Site> siteList=varToSite.get(variable);
+			
+		for(Site sit:siteList){
+			if(sit.isUp()){
+				try{
+					Variable v=sit.readVariable(variable);	
+					out.println("At Site "+sit+": "+v.getValue());
+				}
+				catch(IllegalStateException e){
+					out.println("At Site "+sit+": CANNOT READ, STALE COPY.");
+					continue;
+				}
+			}
+			else{
+				out.println("Site "+sit+" IS DOWN.");
+			}
+		}	
+		
 	}
 	
 	void fail(int site,int timestamp){
