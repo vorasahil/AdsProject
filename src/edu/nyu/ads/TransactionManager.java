@@ -11,6 +11,8 @@ public class TransactionManager {
 	LockManager lockManager;
 	String outputFile;
 	static int timestamp;
+	
+	
                   
 	TransactionManager(Map<String,List<Site>> varToSite,Map<Integer,Site> sites, LockManager lockManager,String outputFile) throws IOException{
 		varToSite = new HashMap<String,List<Site>>(varToSite);
