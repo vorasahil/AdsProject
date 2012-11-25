@@ -1,20 +1,24 @@
 package edu.nyu.ads;
 import java.io.*;
+import java.util.List;
+import java.util.Map;
 public class Runner {
 	
 	private String inputFile;
 	private TransactionManager tm;
 	
-	Runner(String input){
+	Runner(String input,Map<String,List<Site>> varToSite,Map<Integer,Site> sites, LockManager lockManager,String outputFile) throws IOException{
 		this.inputFile=input;
-		tm=new TransactionManager();
+		tm=new TransactionManager(varToSite,sites,lockManager,outputFile);
 	}
 	
 	
 	void run() throws IOException{
+		int timestamp=0;
 		BufferedReader in = new BufferedReader(new FileReader(inputFile)); 
 		String txt="";
 		while (in.ready()) { 
+				
 			  txt = in.readLine(); 
 			  txt=txt.trim();
 			  String cmd[]=txt.split(";");
@@ -25,47 +29,47 @@ public class Runner {
 				 if(text.startsWith("beginRO")){  
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.beginRO(s);
+					 tm.beginRO(s,timestamp);
 				 }
 			  
 				 else if(text.startsWith("begin")){  
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.begin(s);
+					 tm.begin(s,timestamp);
 				 }
 			  
 				 else if(text.contains("dump()")){
-					 tm.dump();
+					 tm.dump(timestamp);
 				 }
 				 else if(text.startsWith("dump(x")){
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.dump(s);
+					 tm.dump(s,timestamp);
 				 }
 				 
 				 else if(text.startsWith("dump(")){
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
 					 int ii=Integer.parseInt(s);
-					 tm.dump(ii);
+					 tm.dump(ii,timestamp);
 				 }
 			  
 				 else if(text.startsWith("end")){  
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.end(s);
+					 tm.end(s,timestamp);
 				 }
 			  
 				 else if(text.startsWith("fail")){  
 					 String x[]=text.split("\\(");
 					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.fail(Integer.parseInt(s));
+					 tm.fail(Integer.parseInt(s),timestamp);
 				 }
 			  
 			  else if(text.startsWith("recover")){  
 				  String x[]=text.split("\\(");
 				  String s=x[1].substring(0,x[1].length()-1);
-				  tm.recover(Integer.parseInt(s));
+				  tm.recover(Integer.parseInt(s),timestamp);
 			  }
 			  
 			  else if(text.startsWith("R")){
@@ -73,7 +77,7 @@ public class Runner {
 				  String x[]=text.split("\\(");
 				  String s[]=x[1].split(",");
 				  s[1]=s[1].trim();
-				  tm.read(s[0],s[1].substring(0,s[1].length()-1));
+				  tm.read(s[0],s[1].substring(0,s[1].length()-1),timestamp);
 				 
 			  }
 				 
@@ -85,20 +89,22 @@ public class Runner {
 				  s[2]=s[2].trim();
 				  s[2]=s[2].substring(0,s[2].length()-1);
 				  
-				  tm.write(s[0],s[1],Integer.parseInt(s[2]));
+				  tm.write(s[0],s[1],Integer.parseInt(s[2]),timestamp);
 				 
 			  }
 			  else{
 				  System.out.println("Could NOT PARSE " + text);
 			  }
 			}
+			  
+			timestamp++;
 		}
 		
 	
 	}
 	
 	public static void main(String arg[]) throws Exception{
-		Runner r=new Runner("input.txt");
-		r.run();
+	//	Runner r=new Runner("input.txt",Map<String,List<Site>> varToSite,Map<Integer,Site> sites, LockManager lockManager,String outputFile);
+	//	r.run();
 	}
 }

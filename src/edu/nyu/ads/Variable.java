@@ -20,6 +20,10 @@ public class Variable {
 		isReplicated=false;
 	}
 	
+	public String getName(){
+		return this.name;
+	}
+	
 	boolean isVariableReplicated(){
 		return this.isReplicated;
 	}
