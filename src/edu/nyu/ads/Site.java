@@ -76,16 +76,7 @@ public class Site {
     	fail=false;
     }
     
-	Map<String,Integer> dump(){
-		Map<String,Integer> map=new HashMap<String,Integer>();
-		for(String var:variablesBackup.keySet()){
-			map.put(var,variablesBackup.get(var).getValue());
-		}
-		return Collections.unmodifiableMap(map);
-	}
-    
-    
-    Variable readVariableBackup(String variable){
+	Variable readVariableBackup(String variable){
 		if(!variablesBackup.containsKey(variable)){
 			throw new IllegalStateException("Does not contain variable");
 		}
@@ -139,8 +130,6 @@ public class Site {
 		
 		return true;
 	}
-	
-	
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
