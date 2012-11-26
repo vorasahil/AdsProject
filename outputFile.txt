@@ -1,37 +1,26 @@
-Transaction Transaction [name=T1, type=ReadWrite, state=Active] READS variable x1.2 = 10at timestamp1
-Transaction Transaction [name=T2, type=ReadWrite, state=Active] READS variable x12.1 = 120at timestamp3
-Transaction Transaction [name=T1, type=ReadWrite, state=Active] WRITES 5 to  variable x1.2 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.1 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.2 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.3 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.4 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.5 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.6 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.7 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.8 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.9 at timestamp 5
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.10 at timestamp 5
-TransactionT2aborting at timestamp6
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.1 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.2 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.3 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.4 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.5 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.6 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.7 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.8 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.9 at timestamp 8
-Transaction Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.10 at timestamp 8
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 21 to  variable x5.6 at timestamp 8
-TransactionT4aborting at timestamp9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.1 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.2 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.3 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.4 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.5 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.6 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.7 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.8 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.9 at timestamp 9
-Transaction Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.10 at timestamp 9
-Transaction Transaction [name=T5, type=ReadOnly, state=Active] reads x15 as 150 on timestamp= 11
+BEGIN READWRITE Transaction [name=T1, type=ReadWrite, state=Active]
+BEGIN READWRITE Transaction [name=T2, type=ReadWrite, state=Active]
+BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.1 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.2 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.3 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.4 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.5 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.6 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.7 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.8 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.9 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.10 at timestamp 3
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.1 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.2 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.3 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.4 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.5 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.6 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.7 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.8 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.9 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.10 at timestamp 4
+Wait Die Protocol--> 
+Transaction T3 aborting at timestamp 5
+Transaction [name=T1, type=ReadWrite, state=Active] READS variable x2.1 = 20at timestamp7

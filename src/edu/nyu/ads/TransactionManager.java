@@ -36,16 +36,18 @@ public class TransactionManager {
 				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
 				blockedTransactions.put(variable, t);
 				t.block(value, read);
+				out.println("Wait Die Protocol-->");
 				abort(temp,timestamp);
 			}
 			else{
+				out.println("Wait Die Protocol-->");
 				abort(t,timestamp);
 			}
 		}
 	}
 	
 	void abort(Transaction t,int timestamp){
-		out.println("Transaction"+t.getName()+"aborting at timestamp"+timestamp);
+		out.println("Transaction "+t.getName()+" aborting at timestamp "+timestamp);
 		Map<String, String> m=t.end(TransactionState.Aborted);
 		Set<String> variables=m.keySet();
 		for(Integer siteNum:sites.keySet()){
@@ -81,9 +83,12 @@ public class TransactionManager {
 		Status s=lockManager.getLock(t, variable);
 		if(read){
 			if(s.equals(Status.Abort)){
+				out.println("Wait Die Protocol--> ");
 				abort(t,timestamp);
 			}
 			if(s.equals(Status.Block)){
+				t.block(value, read);
+				out.println(t+ "is Blocked, could not get the locks but is older..");
 				block(variable,t,read,value,timestamp);
 			}
 			if(s.equals(Status.GetLock)){
@@ -99,7 +104,7 @@ public class TransactionManager {
 						}
 						site.lock(variable, t);
 						t.read(variable);
-						out.println("Transaction " +t+ " READS variable "+variable+"."+site.getSiteNumber()+" = "+ v.getValue()+ "at timestamp" + timestamp );
+						out.println(t+ " READS variable "+variable+"."+site.getSiteNumber()+" = "+ v.getValue()+ "at timestamp" + timestamp );
 						return;
 					}
 				}
@@ -109,9 +114,13 @@ public class TransactionManager {
 		}
 		else{
 			if(s.equals(Status.Abort)){
+				out.println("Wait Die Protocol-->");
 				abort(t,timestamp);
 			}
 			if(s.equals(Status.Block)){
+				t.block(value, read);
+				out.println(t+ "is Blocked, could not get the locks but is older..");
+
 				block(variable,t,read,value,timestamp);
 			}
 			if(s.equals(Status.GetLock)){
@@ -122,7 +131,7 @@ public class TransactionManager {
 						site.lock(variable, t);
 						site.writeVariable(variable, value);
 						t.write(variable, value);
-						out.println("Transaction " +t+ " WRITES "+value+" to  variable "+variable+"."+site.getSiteNumber()+ " at timestamp " + timestamp );
+						out.println(t+ " WRITES "+value+" to  variable "+variable+"."+site.getSiteNumber()+ " at timestamp " + timestamp );
 						wrote=true;
 					}
 				}
@@ -137,9 +146,11 @@ public class TransactionManager {
 	void begin(String s,int timestamp){
 		Transaction temp=new ReadWriteTransaction(s, timestamp);
 		transactions.put(s,temp);
+		out.println("BEGIN READWRITE "+temp);
 	}
 	
 	void beginRO(String s,int timestamp){
+		
 		Map<String,Variable> variables=new HashMap<String,Variable>();
 		for(String var:varToSite.keySet()){
 			
@@ -165,6 +176,7 @@ public class TransactionManager {
 		}
 		Transaction temp=new ReadOnlyTransaction(s,timestamp,variables);
 		transactions.put(s, temp);
+		out.println("BEGIN READONLY "+temp);
 	}
 	
 	boolean end(String s,int timestamp){
@@ -194,7 +206,7 @@ public class TransactionManager {
 	void dump(int timestamp){
 		out.println("COMPLETE DUMP AT TIMESTAMP= "+timestamp);
 		for(Integer siteNum:sites.keySet()){
-			dump(siteNum);
+			dump(siteNum,timestamp);
 		}
 		
 	}
