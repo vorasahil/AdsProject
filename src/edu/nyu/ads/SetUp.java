@@ -30,6 +30,7 @@ public class SetUp {
 		for(int  i =1 ;i<=10;i++){
 			siteLockTable = new HashMap<String,Transaction>();
 			sitesLockTable.add(siteLockTable);
+			lockManager.addLocktable(siteLockTable);
 		}
 		
 		for(int i = 1;i<=20;i++){

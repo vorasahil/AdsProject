@@ -18,15 +18,9 @@ public class ReadOnlyTransaction extends Transaction {
 		throw new UnsupportedOperationException("Read Only Transaction Cannot Write!");
 	}
 
-	
 
 	@Override
-	void block() {
-		throw new UnsupportedOperationException("Read Only Transaction Cannot Block!");	
-	}
-
-	@Override
-	Map<String, String> end() {
+	Map<String, String> end(TransactionState s) {
 		return null;
 	}
 

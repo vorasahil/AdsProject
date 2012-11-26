@@ -5,7 +5,7 @@ package edu.nyu.ads;
 
 import java.util.*;
 /**
- * @author Rameez
+ *
  *
  */
 public abstract class Transaction {
@@ -13,6 +13,8 @@ public abstract class Transaction {
 	int timestamp;
 	TransactionType type;
 	TransactionState state;
+	boolean read;
+	int value;
 	
 	Transaction(String name,int timestamp,TransactionType type){
 		this.name=name;
@@ -20,16 +22,33 @@ public abstract class Transaction {
 		this.type=type;
 		this.state=TransactionState.Active;
 	}
+
+
+	void block(int value, boolean read) {
+		// TODO Auto-generated method stub
+		this.state=TransactionState.Blocked;
+		this.value=value;
+		this.read=read;
+	}
+
+	Map<Boolean,Integer>unblock(){
+		Map<Boolean,Integer> map=new HashMap<Boolean,Integer>();
+		map.put(read,value);
+		return map;
+	}
 	
-	abstract void block();
 	abstract int  read (String variable);
 	abstract void write(String variable, int value);
-	abstract Map<String,String> end();
+	abstract Map<String,String> end(TransactionState s);
 
 	public int getTimestamp() {
 		return timestamp;
 	}
 
+	public String getName(){
+		return this.name;
+	}
+	
 	public void setTimestamp(int timestamp) {
 		this.timestamp = timestamp;
 	}

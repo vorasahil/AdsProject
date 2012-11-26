@@ -7,7 +7,7 @@ public class TransactionManager {
 	Map<Integer,Site> sites;
 	//Map<String,Transaction> transactions;
 	Map<String,Transaction> transactions;
-	Map<Variable,List<Transaction>> blockedTransactions;
+	Map<String,Transaction> blockedTransactions;
 	LockManager lockManager;
 	String outputFile;
 	static int timestamp;
@@ -21,13 +21,118 @@ public class TransactionManager {
 		this.lockManager=lockManager;
 		//transactions=new HashMap<String,Transaction>();
 		transactions=new HashMap<String,Transaction>();
-		blockedTransactions=new HashMap<Variable,List<Transaction>>();
+		blockedTransactions=new HashMap<String,Transaction>();
+		timestamp=0;
+	}
+	
+	void closeFile(){
+		out.close();
+	}
+	
+	void block(String variable,Transaction t,boolean read,int value,int timestamp){
+		if(blockedTransactions.containsKey(variable)){
+			Transaction temp=blockedTransactions.get(variable);
+			if(temp.getTimestamp()>t.getTimestamp()){
+				
+				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
+				blockedTransactions.put(variable, t);
+				t.block(value, read);
+				abort(temp,timestamp);
+			}
+			else{
+				abort(t,timestamp);
+			}
+		}
+	}
+	
+	void abort(Transaction t,int timestamp){
+		out.println("Transaction"+t.getName()+"aborting at timestamp"+timestamp);
+		Map<String, String> m=t.end(TransactionState.Aborted);
+		Set<String> variables=m.keySet();
+		for(Integer siteNum:sites.keySet()){
+			Site site=sites.get(siteNum);
+			site.abort(t);
+		}
+		for(String v:variables){
+			if(blockedTransactions.containsKey(v)){
+				Transaction temp=blockedTransactions.get(v);
+				blockedTransactions.remove(v);
+				Map<Boolean,Integer> map=temp.unblock();
+				if(map.containsKey(true)){
+					//true means it was a read operation that it was blocked on.
+					read(t.getName(),v,timestamp);
+				}
+				else{
+					write(t.getName(),v,map.get(false),timestamp);
+				}
+			}
+		}
 		
 	}
 	
-	boolean lock(String s,Variable v){
+	/**
+	 * 
+	 * @param variable Variable name	
+	 * @param t Transaction that wants to lock the variable
+	 * @param read true if the lock is for "read" and false if the lock is for "write"
+	 * @param value the value to be written. This value wont matter if read is true.
+	 * @return
+	 */
+	void lock(String variable,Transaction t,boolean read,int value,int timestamp){
+		Status s=lockManager.getLock(t, variable);
+		if(read){
+			if(s.equals(Status.Abort)){
+				abort(t,timestamp);
+			}
+			if(s.equals(Status.Block)){
+				block(variable,t,read,value,timestamp);
+			}
+			if(s.equals(Status.GetLock)){
+				List<Site> list=varToSite.get(variable);
+				for(Site site:list){
+					if(site.isUp()){
+						Variable v=null;
+						try{
+							v=site.readVariable(variable);
+						}
+						catch(IllegalStateException e){
+							continue;
+						}
+						site.lock(variable, t);
+						t.read(variable);
+						out.println("Transaction " +t+ " READS variable "+variable+" = "+ v.getValue()+ "at timestamp" + timestamp );
+						return;
+					}
+				}
+				
+				block(variable,t,read,value,timestamp);
+			}
+		}
+		else{
+			if(s.equals(Status.Abort)){
+				abort(t,timestamp);
+			}
+			if(s.equals(Status.Block)){
+				block(variable,t,read,value,timestamp);
+			}
+			if(s.equals(Status.GetLock)){
+				List<Site> list=varToSite.get(variable);
+				boolean wrote=false;
+				for(Site site:list){
+					if(site.isUp()){
+						site.lock(variable, t);
+						site.writeVariable(variable, value);
+						t.write(variable, value);
+						out.println("Transaction " +t+ " WRITES "+value+" to  variable "+variable+ " at timestamp " + timestamp );
+						wrote=true;
+					}
+				}
+				if(!wrote){
+					block(variable,t,read,value,timestamp);
+				}
+			}
+		}
 		
-		return false;
 	}
 	
 	void begin(String s,int timestamp){
@@ -68,16 +173,23 @@ public class TransactionManager {
 		return false;
 	}
 	
-	boolean read(String s, String v,int timestamp){
-		System.out.println("read" +" "+s+" "+v);
-		return false;
+	boolean read(String transaction, String variable,int timestamp){
+		Transaction temp=transactions.get(transaction);
+		if(temp.type.equals(TransactionType.ReadOnly)){
+			int value=temp.read(variable);
+			out.println("Transaction "+transaction+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
+		}
+		else{
+			lock(variable,transactions.get(transaction),true,0,timestamp);
+		}
+		return true;
 	}
 	
 	
-	boolean write(String s, String v, int value,int timestamp)
+	boolean write(String transaction, String variable, int value,int timestamp)
 	{
-		System.out.println("write "+s+" "+" "+v+" "+value);
-		return false;
+		lock(variable,transactions.get(transaction),false,value,timestamp);
+		return true;
 	}
 	
 	void dump(int timestamp){

@@ -15,6 +15,7 @@ public class Runner {
 	
 	void run() throws IOException{
 		int timestamp=0;
+		tm.timestamp=timestamp;
 		BufferedReader in = new BufferedReader(new FileReader(inputFile)); 
 		String txt="";
 		while (in.ready()) { 
@@ -98,13 +99,15 @@ public class Runner {
 			}
 			  
 			timestamp++;
+			tm.timestamp=timestamp;
 		}
-		
+		tm.closeFile();
 	
 	}
 	
 	public static void main(String arg[]) throws Exception{
 	//	Runner r=new Runner("input.txt",Map<String,List<Site>> varToSite,Map<Integer,Site> sites, LockManager lockManager,String outputFile);
 	//	r.run();
+	
 	}
 }

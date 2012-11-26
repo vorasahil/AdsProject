@@ -2,10 +2,15 @@ package edu.nyu.ads;
 import java.util.*;
 public class ReadWriteTransaction extends Transaction {
 
+	Integer value;
+	Boolean read;
+	
 	Map<String,String> touchedVariables;
 	ReadWriteTransaction(String name,  int timestamp) {
 		super(name,timestamp, TransactionType.ReadWrite);
 		touchedVariables=new HashMap<String,String>();
+		value=null;
+		read=null;
 	}
 
 	@Override
@@ -24,14 +29,10 @@ public class ReadWriteTransaction extends Transaction {
 	}
 
 	
+	
 	@Override
-	void block() {
-		// TODO Auto-generated method stub
-		this.state=TransactionState.Blocked;
-	}
-
-	@Override
-	Map<String, String> end() {
+	Map<String, String> end(TransactionState s) {
+		this.state=s;
 		return Collections.unmodifiableMap(this.touchedVariables);
 	}
 

@@ -134,10 +134,24 @@ public class Site {
 		
 		for(String variable:names){
 			variablesBackup.get(variable).setValue(variables.get(variable).getValue());
+			variables.put(variable,variablesBackup.get(variable));//Restore the original variable object in variables map.
 			lockTable.remove(variable);
 		}
 		
 		return true;
+	}
+	
+	void abort(Transaction t){
+		ArrayList<String> vars=new ArrayList<String>();
+		for(String var:lockTable.keySet()){
+			if(lockTable.get(var).equals(t)){
+				vars.add(var);
+				variables.put(var,variablesBackup.get(var));
+			}
+		}
+		for(String var:vars){
+			lockTable.remove(var);
+		}
 	}
 	
 	

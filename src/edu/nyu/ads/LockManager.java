@@ -16,6 +16,9 @@ public class LockManager {
 		for(HashMap<String,Transaction> lockTable : locks){
 			if(lockTable.containsKey(variable)){
 				Transaction temp = lockTable.get(variable);
+				if(temp.equals(t)){
+					return Status.GetLock;
+				}
 				if(temp.getTimestamp() > t.getTimestamp()){
 					return Status.Block;
 				}
