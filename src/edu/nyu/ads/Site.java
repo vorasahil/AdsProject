@@ -8,6 +8,7 @@ public class Site {
 	private Map<String,Variable> variables;
 	private Map<String,Variable> variablesBackup;	
     private Map<String, Transaction> lockTable;
+    private Map<String,List<Transaction>> readLockTable;
     private boolean fail;
     private Map<String,Boolean> isReadable;
     /**
@@ -15,13 +16,14 @@ public class Site {
      * @param siteNumber
      * @param variables
      */
-    public Site(int siteNumber,Map<String,Variable> variables,Map<String,Transaction> lockTable){
+    public Site(int siteNumber,Map<String,Variable> variables,Map<String,Transaction> lockTable, Map<String,List<Transaction>> readLockTable){
     		this.siteNumber=siteNumber;
     		this.variables=new HashMap<String,Variable>(variables);
     		this.variablesBackup=new HashMap<String,Variable>(variables);
     		this.fail=false;
     		this.lockTable=lockTable;//shallow copy, also passed to the lockManager..
     		isReadable=new HashMap<String,Boolean>();
+    		this.readLockTable=readLockTable;
     		for(String variable:variables.keySet()){
     			isReadable.put(variable, true);
     		}
@@ -31,12 +33,38 @@ public class Site {
      * 
      * @param variable
      * @param t
+     * @param read : If true, read lock else write lock
      * @return
      */
-    boolean lock(String variable, Transaction t){
+    boolean lock(String variable, Transaction t, boolean read){
+    	if(read){
+    		if(readLockTable.containsKey(variable)){
+    			if(!readLockTable.get(variable).contains(t))
+    				readLockTable.get(variable).add(t);
+    		}
+    		else{
+    			List<Transaction> lst=new ArrayList<Transaction>();
+    			lst.add(t);
+    			readLockTable.put(variable, lst);
+    		}
+    		return true;
+    	}
+    	else{
+    	
          	if(!variable.contains(variable))
          		throw new IllegalStateException("Does not contain that variable");
-    		if(lockTable.containsKey(variable)){
+         
+         	//updating readLockTable
+         	if(readLockTable.containsKey(variable)){
+         		if(readLockTable.get(variable).contains(t)){
+         			readLockTable.get(variable).remove(t);
+         		}
+         		else{
+         			throw new IllegalStateException("LOCK MANAGER IS MALFUNCTIONING!");
+         		}
+         	}
+         	
+         	if(lockTable.containsKey(variable)){
     			if(lockTable.get(variable).equals(t))
     				return true;
          		return false;
@@ -45,15 +73,25 @@ public class Site {
          		lockTable.put(variable,t);
          		return true;
          	}
+    	}
     }
     
     boolean releaseLock(String variable, Transaction t){
-    	if(!lockTable.containsKey(variable))
-    		throw new IllegalStateException("Does not contain that lock");
-    	else{
-    		lockTable.remove(variable);
+    	if(readLockTable.containsKey(variable)){
+    		readLockTable.get(variable).remove(t);
     		return true;
-    	}	
+    	}
+    	if(lockTable.containsKey(variable)){
+    		if(!lockTable.get(variable).equals(t)){
+    			throw new IllegalStateException("LOCK NOT with "+t+"!");
+    		}
+    		else{
+    			lockTable.remove(variable);
+    			return true;
+    		}	
+    	
+    	}
+    	return true;
     }
     
     boolean isUp(){
@@ -142,6 +180,10 @@ public class Site {
 			lockTable.remove(variable);
 		}
 		
+		for(String var:readLockTable.keySet()){
+			readLockTable.get(var).remove(t);
+		}
+		
 		return true;
 	}
 	
@@ -155,6 +197,10 @@ public class Site {
 		}
 		for(String var:vars){
 			lockTable.remove(var);
+		}
+		
+		for(String var:readLockTable.keySet()){
+			readLockTable.get(var).remove(t);
 		}
 	}
 	

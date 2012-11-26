@@ -34,9 +34,11 @@ public class TransactionManager {
 			if(temp.getTimestamp()>t.getTimestamp()){
 				
 				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
+				//remove the transa
 				blockedTransactions.put(variable, t);
 				t.block(value, read);
 				out.println("Wait Die Protocol-->");
+				blockedTransactions.put(variable,t);
 				abort(temp,timestamp);
 			}
 			else{
@@ -80,7 +82,7 @@ public class TransactionManager {
 	 * @return
 	 */
 	void lock(String variable,Transaction t,boolean read,int value,int timestamp){
-		Status s=lockManager.getLock(t, variable);
+		Status s=lockManager.getLock(t, variable,read);
 		if(read){
 			if(s.equals(Status.Abort)){
 				out.println("Wait Die Protocol--> ");
@@ -102,7 +104,7 @@ public class TransactionManager {
 						catch(IllegalStateException e){
 							continue;
 						}
-						site.lock(variable, t);
+						site.lock(variable, t,read);
 						t.read(variable);
 						out.println(t+ " READS variable "+variable+"."+site.getSiteNumber()+" = "+ v.getValue()+ "at timestamp" + timestamp );
 						return;
@@ -128,7 +130,7 @@ public class TransactionManager {
 				boolean wrote=false;
 				for(Site site:list){
 					if(site.isUp()){
-						site.lock(variable, t);
+						site.lock(variable, t,read);
 						site.writeVariable(variable, value);
 						t.write(variable, value);
 						out.println(t+ " WRITES "+value+" to  variable "+variable+"."+site.getSiteNumber()+ " at timestamp " + timestamp );
@@ -160,7 +162,7 @@ public class TransactionManager {
 				if(sit.isUp()){
 					Variable v=null;
 					try{
-						v=sit.readVariable(var);	
+						v=sit.readVariableBackup(var);	
 					}
 					catch(IllegalStateException e){
 					continue;

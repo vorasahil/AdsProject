@@ -21,6 +21,8 @@ public class Architecture {
 			ArrayList<String> arr=new ArrayList<String>();
 			Map<String,Variable> map=new HashMap<String,Variable>();
 			Map<String,Transaction> lockTable=new HashMap<String,Transaction>();
+			Map<String,List<Transaction>> readLockTable=new HashMap<String,List<Transaction>>();
+
 				if(i%2==1){
 					for(int j=2;j<=20;j+=2){
 						String x="x"+j;
@@ -45,9 +47,10 @@ public class Architecture {
 					
 				}
 				
-			Site s=new Site(i, map,lockTable);
+			Site s=new Site(i, map,lockTable,readLockTable);
 			sites.put(i,s);
 			lockManager.addLocktable(lockTable);
+			lockManager.addReadLocktable(readLockTable);
 			for(String str:arr){
 				varToSite.get(str).add(s);
 			}
