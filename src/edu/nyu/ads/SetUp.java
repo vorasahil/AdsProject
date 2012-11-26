@@ -23,11 +23,11 @@ public class SetUp {
 		String inputFile = "inputFile";
 		
 		int  varValue;
-		for(int  i =1 ;i<=10;i++){
+		for(int  i = 1;i<=11;i++){
 			valueAtSite = new HashMap<String,Variable>();
-			valuesAtSites.add(i,valueAtSite);	
+			valuesAtSites.add(valueAtSite);	
 		}
-		for(int  i =1 ;i<=10;i++){
+		for(int  i =1 ;i<=11;i++){
 			siteLockTable = new HashMap<String,Transaction>();
 			sitesLockTable.add(siteLockTable);
 		}
@@ -73,14 +73,19 @@ public class SetUp {
 		}
 		
 		
-		try {
+	try {
 			Runner r  = new Runner(inputFile,varToSite,sitesMap,lockManager,outputFile);
 			r.run();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		
+	}
+	
+	public static void main(String args[]){
+		SetUp s = new SetUp();
+		s.initialize();
 	}
 	
 }
