@@ -92,5 +92,15 @@ public abstract class Transaction {
 			return false;
 		return true;
 	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Transaction [name=" + name + ", type=" + type + ", state="
+				+ state + "]";
+	}
 	
 }

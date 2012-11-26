@@ -19,8 +19,8 @@ public class SetUp {
 		ArrayList<Site> siteVarList;
 		LockManager lockManager = new LockManager();
 		String varName;
-		String outputFile = "outputFile";
-		String inputFile = "inputFile";
+		String outputFile = "outputFile.txt";
+		String inputFile = "input.txt";
 		
 		int  varValue;
 		for(int  i = 1;i<=11;i++){

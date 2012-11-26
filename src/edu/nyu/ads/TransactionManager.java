@@ -14,15 +14,14 @@ public class TransactionManager {
                   
 	
 	TransactionManager(Map<String,List<Site>> varToSite,Map<Integer,Site> sites, LockManager lockManager,String outputFile) throws IOException{
-		varToSite = new HashMap<String,List<Site>>(varToSite);
-		sites = new HashMap<Integer,Site>(sites);
+		this.varToSite = new HashMap<String,List<Site>>(varToSite);
+		this.sites = new HashMap<Integer,Site>(sites);
 		this.outputFile=outputFile;
-		out = new PrintWriter(new FileWriter(outputFile));
+		this.out = new PrintWriter(new FileWriter(outputFile));
 		this.lockManager=lockManager;
 		//transactions=new HashMap<String,Transaction>();
-		transactions=new HashMap<String,Transaction>();
-		blockedTransactions=new HashMap<String,Transaction>();
-		timestamp=0;
+		this.transactions=new HashMap<String,Transaction>();
+		this.blockedTransactions=new HashMap<String,Transaction>();
 	}
 	
 	void closeFile(){
@@ -100,7 +99,7 @@ public class TransactionManager {
 						}
 						site.lock(variable, t);
 						t.read(variable);
-						out.println("Transaction " +t+ " READS variable "+variable+" = "+ v.getValue()+ "at timestamp" + timestamp );
+						out.println("Transaction " +t+ " READS variable "+variable+"."+site.getSiteNumber()+" = "+ v.getValue()+ "at timestamp" + timestamp );
 						return;
 					}
 				}
@@ -123,7 +122,7 @@ public class TransactionManager {
 						site.lock(variable, t);
 						site.writeVariable(variable, value);
 						t.write(variable, value);
-						out.println("Transaction " +t+ " WRITES "+value+" to  variable "+variable+ " at timestamp " + timestamp );
+						out.println("Transaction " +t+ " WRITES "+value+" to  variable "+variable+"."+site.getSiteNumber()+ " at timestamp " + timestamp );
 						wrote=true;
 					}
 				}
@@ -177,7 +176,7 @@ public class TransactionManager {
 		Transaction temp=transactions.get(transaction);
 		if(temp.type.equals(TransactionType.ReadOnly)){
 			int value=temp.read(variable);
-			out.println("Transaction "+transaction+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
+			out.println("Transaction "+transactions.get(transaction)+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
 		}
 		else{
 			lock(variable,transactions.get(transaction),true,0,timestamp);
@@ -218,7 +217,7 @@ public class TransactionManager {
 	void dump(String variable,int timestamp){
 		out.println("Dumping Variable "+variable+" at timestamp"+timestamp);
 		List<Site> siteList=varToSite.get(variable);
-			
+			System.out.println();
 		for(Site sit:siteList){
 			if(sit.isUp()){
 				try{

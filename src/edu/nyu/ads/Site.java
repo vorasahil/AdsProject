@@ -15,7 +15,7 @@ public class Site {
      * @param siteNumber
      * @param variables
      */
-    public Site(int siteNumber,Map<String,Variable> variables,HashMap<String,Transaction> lockTable){
+    public Site(int siteNumber,Map<String,Variable> variables,Map<String,Transaction> lockTable){
     		this.siteNumber=siteNumber;
     		this.variables=new HashMap<String,Variable>(variables);
     		this.variablesBackup=new HashMap<String,Variable>(variables);
@@ -58,6 +58,10 @@ public class Site {
     
     boolean isUp(){
       		return !fail;
+    }
+    
+    int getSiteNumber(){
+    	return this.siteNumber;
     }
     
     void fail(){
@@ -185,6 +189,17 @@ public class Site {
 		if (siteNumber != other.siteNumber)
 			return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Site [siteNumber=" + siteNumber + ", variables=" + variables
+				+ ", variablesBackup=" + variablesBackup + ", lockTable="
+				+ lockTable + ", fail=" + fail + ", isReadable=" + isReadable
+				+ "]";
 	}
 
 }

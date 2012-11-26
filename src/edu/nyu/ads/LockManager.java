@@ -1,19 +1,19 @@
 package edu.nyu.ads;
 import java.util.*;
 public class LockManager {
-	List<HashMap<String, Transaction>> locks;
+	List<Map<String, Transaction>> locks;
 	
 	LockManager(){
-		locks=new ArrayList<HashMap<String,Transaction>>();
+		locks=new ArrayList<Map<String,Transaction>>();
 	}
 	
-	void addLocktable(HashMap<String,Transaction> lockTable){
+	void addLocktable(Map<String,Transaction> lockTable){
 		locks.add(lockTable);
 	}
 	
 	Status getLock(Transaction t,String variable){
 		
-		for(HashMap<String,Transaction> lockTable : locks){
+		for(Map<String,Transaction> lockTable : locks){
 			if(lockTable.containsKey(variable)){
 				Transaction temp = lockTable.get(variable);
 				if(temp.equals(t)){
@@ -22,11 +22,12 @@ public class LockManager {
 				if(temp.getTimestamp() > t.getTimestamp()){
 					return Status.Block;
 				}
+
+				else{
+					return Status.Abort;
+				}
 			}
 			
-			else{
-				return Status.Abort;
-			}
 		}
 		
 		return Status.GetLock;

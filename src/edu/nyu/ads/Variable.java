@@ -70,4 +70,13 @@ public class Variable {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Variable [name=" + name + ", value=" + value
+				+ ", isReplicated=" + isReplicated + "]";
+	}
+
 }
