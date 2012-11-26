@@ -56,6 +56,10 @@ public class SetUp {
 			valuesAtSites.get(1+i%10).put(varName,variable);	
 			
 		}
+		for(int i = 1;i<=10;i++){
+			sites[i] = new Site(i,valuesAtSites.get(i),sitesLockTable.get(i));
+			sitesMap.put(i,sites[i]);
+		}
 		for(int  i = 2;i<=20;i = i+2){
 			varName = "x"+i;
 			for(int j = 1;j<=10;j++){
@@ -63,15 +67,14 @@ public class SetUp {
 			}
 		}
 		
+	
+		
 		for(int i = 1;i<=19;i = i+2){
 			varName = "x"+i;
 			varToSite.get(varName).add(sites[1+i%10]);
 		}
 		
-		for(int i = 1;i<=10;i++){
-			sites[i] = new Site(i,valuesAtSites.get(i),sitesLockTable.get(i));
-			sitesMap.put(i,sites[i]);
-		}
+		
 		
 		
 	try {
