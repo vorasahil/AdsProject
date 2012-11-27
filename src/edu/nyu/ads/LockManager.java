@@ -51,7 +51,7 @@ public class LockManager {
 				return Status.GetLock;
 			
 			for(Transaction trans:hasReadLock){
-				if(trans.getTimestamp()<t.getTimestamp()){
+				if(trans.getTimestamp() < t.getTimestamp()){
 					return Status.Abort;
 				}
 				

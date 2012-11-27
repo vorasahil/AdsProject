@@ -9,7 +9,9 @@ public class ReadOnlyTransaction extends Transaction {
 	}
 	
 	@Override
-	int read(String variable) {
+	Integer read(String variable) {
+		if(variables.get(variable)==null)
+			return null;
 		return variables.get(variable).getValue();
 	}
 

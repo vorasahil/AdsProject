@@ -37,7 +37,7 @@ public abstract class Transaction {
 		return map;
 	}
 	
-	abstract int  read (String variable);
+	abstract Integer  read (String variable);
 	abstract void write(String variable, int value);
 	abstract Map<String,String> end(TransactionState s);
 

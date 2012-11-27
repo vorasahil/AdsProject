@@ -14,7 +14,7 @@ public class ReadWriteTransaction extends Transaction {
 	}
 
 	@Override
-	int read(String variable) {
+	Integer read(String variable) {
 		if(!touchedVariables.containsKey(variable))
 		{
 			touchedVariables.put(variable,"Read");

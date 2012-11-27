@@ -32,30 +32,36 @@ public class TransactionManager {
 		if(blockedTransactions.containsKey(variable)){
 			Transaction temp=blockedTransactions.get(variable);
 			if(temp.getTimestamp()>t.getTimestamp()){
-				
 				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
-				//remove the transa
 				blockedTransactions.put(variable, t);
 				t.block(value, read);
-				out.println("Wait Die Protocol-->");
 				blockedTransactions.put(variable,t);
+				out.println("Wait Die Protocol-->1");
 				abort(temp,timestamp);
 			}
 			else{
-				out.println("Wait Die Protocol-->");
+				out.println("Wait Die Protocol-->2");
 				abort(t,timestamp);
 			}
+		}
+		
+		else{
+			blockedTransactions.put(variable,t);
+			out.println(t+" Blocked On "+variable+" at timestamp "+timestamp );
 		}
 	}
 	
 	void abort(Transaction t,int timestamp){
 		out.println("Transaction "+t.getName()+" aborting at timestamp "+timestamp);
+		System.out.println(blockedTransactions);
 		Map<String, String> m=t.end(TransactionState.Aborted);
 		Set<String> variables=m.keySet();
+		System.out.println(variables);
 		for(Integer siteNum:sites.keySet()){
 			Site site=sites.get(siteNum);
 			site.abort(t);
 		}
+		
 		for(String v:variables){
 			if(blockedTransactions.containsKey(v)){
 				Transaction temp=blockedTransactions.get(v);
@@ -63,10 +69,10 @@ public class TransactionManager {
 				Map<Boolean,Integer> map=temp.unblock();
 				if(map.containsKey(true)){
 					//true means it was a read operation that it was blocked on.
-					read(t.getName(),v,timestamp);
+					read(temp.getName(),v,timestamp);
 				}
 				else{
-					write(t.getName(),v,map.get(false),timestamp);
+					write(temp.getName(),v,map.get(false),timestamp);
 				}
 			}
 		}
@@ -85,13 +91,15 @@ public class TransactionManager {
 		Status s=lockManager.getLock(t, variable,read);
 		if(read){
 			if(s.equals(Status.Abort)){
-				out.println("Wait Die Protocol--> ");
+				out.println("Wait Die Protocol-->3 ");
 				abort(t,timestamp);
 			}
 			if(s.equals(Status.Block)){
 				t.block(value, read);
 				out.println(t+ "is Blocked, could not get the locks but is older..");
 				block(variable,t,read,value,timestamp);
+
+				blockedTransactions.put(variable, t);
 			}
 			if(s.equals(Status.GetLock)){
 				List<Site> list=varToSite.get(variable);
@@ -110,8 +118,9 @@ public class TransactionManager {
 						return;
 					}
 				}
-				
+				out.println("All sites with this variable("+variable+") are down-->");
 				block(variable,t,read,value,timestamp);
+				blockedTransactions.put(variable,t);
 			}
 		}
 		else{
@@ -121,9 +130,12 @@ public class TransactionManager {
 			}
 			if(s.equals(Status.Block)){
 				t.block(value, read);
+
 				out.println(t+ "is Blocked, could not get the locks but is older..");
 
 				block(variable,t,read,value,timestamp);
+
+				blockedTransactions.put(variable, t);
 			}
 			if(s.equals(Status.GetLock)){
 				List<Site> list=varToSite.get(variable);
@@ -138,7 +150,9 @@ public class TransactionManager {
 					}
 				}
 				if(!wrote){
+					out.println("All sites with this variable("+variable+") are down-->");
 					block(variable,t,read,value,timestamp);
+					blockedTransactions.put(variable,t);
 				}
 			}
 		}
@@ -189,7 +203,10 @@ public class TransactionManager {
 	boolean read(String transaction, String variable,int timestamp){
 		Transaction temp=transactions.get(transaction);
 		if(temp.type.equals(TransactionType.ReadOnly)){
-			int value=temp.read(variable);
+			Integer value=temp.read(variable);
+			if(value==null)
+				out.println(transactions.get(transaction)+" waiting..");
+			else
 			out.println("Transaction "+transactions.get(transaction)+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
 		}
 		else{
@@ -231,7 +248,6 @@ public class TransactionManager {
 	void dump(String variable,int timestamp){
 		out.println("Dumping Variable "+variable+" at timestamp"+timestamp);
 		List<Site> siteList=varToSite.get(variable);
-			System.out.println();
 		for(Site sit:siteList){
 			if(sit.isUp()){
 				try{
@@ -251,10 +267,12 @@ public class TransactionManager {
 	}
 	
 	void fail(int site,int timestamp){
+		sites.get(site).fail();
 		System.out.println("fail"+site);
 	}
 	
 	void recover(int site,int timestamp){
+		sites.get(site).recover();
 		System.out.println("recover"+site);
 	}
 	
