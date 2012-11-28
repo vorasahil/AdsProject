@@ -29,6 +29,22 @@ public class Site {
     		}
     }
     
+    public Map<String,Variable> getVariableBackup(){
+    	return Collections.unmodifiableMap(variablesBackup);
+    }
+    
+    public Set<Transaction> getTransactionOnSite(){
+    	Set<Transaction> transactionSet = new HashSet<Transaction>();
+    	for(String s: readLockTable.keySet()){
+    		transactionSet.addAll(readLockTable.get(s));	
+    	}
+    	for(String s: lockTable.keySet()){
+    		transactionSet.add(lockTable.get(s));	
+    	}
+    	
+    	return transactionSet;
+    }
+    
     /**
      * 
      * @param variable
@@ -182,6 +198,12 @@ public class Site {
 		
 		for(String var:readLockTable.keySet()){
 			readLockTable.get(var).remove(t);
+		}
+		
+		List<String> tempVariableList = new ArrayList<String>(readLockTable.keySet());
+		for(String var:tempVariableList){
+			if(readLockTable.get(var).size()==0)
+				readLockTable.remove(var);
 		}
 		
 		return true;

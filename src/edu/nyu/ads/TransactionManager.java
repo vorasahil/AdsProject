@@ -83,11 +83,37 @@ public class TransactionManager {
 				}
 			}
 		}
-		
+		transactions.remove(t);
 	}
 	
-	void abortSiteFailure(Transaction t,int timestamp){
+	void abortSiteFailure(Transaction t,int timestamp,List<String> nonReplicatedVariables){
+		out.println("Transaction "+t.getName()+" aborting at timestamp "+timestamp);
+		System.out.println(blockedTransactions);
+		Map<String, String> m=t.end(TransactionState.Aborted);
+		Set<String> variables=m.keySet();
+		System.out.println(variables);
+		for(Integer siteNum:sites.keySet()){
+			Site site=sites.get(siteNum);
+			site.abort(t);
+		}
+		for(String v:variables){
+			if(!nonReplicatedVariables.contains(v)){
+				List<Transaction> blockedTransaction=blockedTransactions.get(v);
+				Transaction temp = blockedTransaction.remove(0);
+				if(blockedTransaction.size()==0)
+					blockedTransactions.remove(v);
+				Map<Boolean,Integer> map=temp.unblock();
+				if(map.containsKey(true)){
+					//true means it was a read operation that it was blocked on.
+					read(temp.getName(),v,timestamp);
+				}
+				else{
+					write(temp.getName(),v,map.get(false),timestamp);
+				}
+			}
+		}
 		
+		transactions.remove(t);
 	}
 	
 	/**
@@ -208,6 +234,30 @@ public class TransactionManager {
 	
 	boolean end(String s,int timestamp){
 		System.out.println("end "+s);
+		if(transactions.containsKey(s)){
+			for(Integer siteNum: sites.keySet()){
+				sites.get(siteNum).commit(transactions.get(s));
+			}
+		}
+		Map<String, String> m=transactions.get(s).end(TransactionState.Commited);
+		Set<String> variables=m.keySet();
+		for(String v:variables){
+			if(blockedTransactions.containsKey(v)){
+				List<Transaction> blockedTransaction=blockedTransactions.get(v);
+				Transaction temp = blockedTransaction.remove(0);
+				if(blockedTransaction.size()==0)
+					blockedTransactions.remove(v);
+				Map<Boolean,Integer> map=temp.unblock();
+				if(map.containsKey(true)){
+					//true means it was a read operation that it was blocked on.
+					read(temp.getName(),v,timestamp);
+				}
+				else{
+					write(temp.getName(),v,map.get(false),timestamp);
+				}
+			}
+		}
+		out.println("END transaction"+transactions.get(s));
 		return false;
 	}
 	
@@ -280,9 +330,23 @@ public class TransactionManager {
 	void fail(int site,int timestamp){
 		
 		//site lock map
-		sites.get(site).fail();
 		
-		System.out.println("fail"+site);
+		List<String> nonReplicatedVariables = new ArrayList<String>();
+		Map<String,Variable> variables = sites.get(site).getVariableBackup();
+		for(String v: variables.keySet()){
+			if(!variables.get(v).isVariableReplicated()){
+				nonReplicatedVariables.add(v);
+			}
+		}
+		
+		Set<Transaction> transactionSet = sites.get(site).getTransactionOnSite();
+		for(Transaction t:transactionSet){
+			this.abortSiteFailure(t, timestamp,nonReplicatedVariables);
+		}
+		
+		
+		sites.get(site).fail();
+		out.println("fail"+sites.get(site));
 	}
 	
 	void recover(int site,int timestamp){
