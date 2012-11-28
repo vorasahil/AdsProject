@@ -7,7 +7,7 @@ public class TransactionManager {
 	Map<Integer,Site> sites;
 	//Map<String,Transaction> transactions;
 	Map<String,Transaction> transactions;
-	Map<String,Transaction> blockedTransactions;
+	Map<String,List<Transaction>> blockedTransactions;
 	LockManager lockManager;
 	String outputFile;
 	static int timestamp;
@@ -21,7 +21,7 @@ public class TransactionManager {
 		this.lockManager=lockManager;
 		//transactions=new HashMap<String,Transaction>();
 		this.transactions=new HashMap<String,Transaction>();
-		this.blockedTransactions=new HashMap<String,Transaction>();
+		this.blockedTransactions=new HashMap<String,List<Transaction>>();
 	}
 	
 	void closeFile(){
@@ -29,16 +29,19 @@ public class TransactionManager {
 	}
 	
 	void block(String variable,Transaction t,boolean read,int value,int timestamp){
+		
 		if(blockedTransactions.containsKey(variable)){
-			Transaction temp=blockedTransactions.get(variable);
-			if(temp.getTimestamp()>t.getTimestamp()){
+			List<Transaction> blockedTransaction=blockedTransactions.get(variable);
+			Transaction temp = blockedTransaction.get(blockedTransaction.size()-1);
+			
+			// Check if the current transaction is older than the last blocked one
+			if(t.getTimestamp()<temp.getTimestamp()){
+				blockedTransaction.add(t);
 				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
-				blockedTransactions.put(variable, t);
 				t.block(value, read);
-				blockedTransactions.put(variable,t);
 				out.println("Wait Die Protocol-->1");
-				abort(temp,timestamp);
 			}
+			
 			else{
 				out.println("Wait Die Protocol-->2");
 				abort(t,timestamp);
@@ -46,7 +49,9 @@ public class TransactionManager {
 		}
 		
 		else{
-			blockedTransactions.put(variable,t);
+			ArrayList<Transaction>  newBlockedList =new ArrayList<Transaction>();
+			newBlockedList.add(t);
+			blockedTransactions.put(variable,newBlockedList);
 			out.println(t+" Blocked On "+variable+" at timestamp "+timestamp );
 		}
 	}
@@ -64,8 +69,10 @@ public class TransactionManager {
 		
 		for(String v:variables){
 			if(blockedTransactions.containsKey(v)){
-				Transaction temp=blockedTransactions.get(v);
-				blockedTransactions.remove(v);
+				List<Transaction> blockedTransaction=blockedTransactions.get(v);
+				Transaction temp = blockedTransaction.remove(0);
+				if(blockedTransaction.size()==0)
+					blockedTransactions.remove(v);
 				Map<Boolean,Integer> map=temp.unblock();
 				if(map.containsKey(true)){
 					//true means it was a read operation that it was blocked on.
@@ -76,6 +83,10 @@ public class TransactionManager {
 				}
 			}
 		}
+		
+	}
+	
+	void abortSiteFailure(Transaction t,int timestamp){
 		
 	}
 	
@@ -99,7 +110,7 @@ public class TransactionManager {
 				out.println(t+ "is Blocked, could not get the locks but is older..");
 				block(variable,t,read,value,timestamp);
 
-				blockedTransactions.put(variable, t);
+				//blockedTransactions.get(variable).;
 			}
 			if(s.equals(Status.GetLock)){
 				List<Site> list=varToSite.get(variable);
@@ -120,7 +131,7 @@ public class TransactionManager {
 				}
 				out.println("All sites with this variable("+variable+") are down-->");
 				block(variable,t,read,value,timestamp);
-				blockedTransactions.put(variable,t);
+			//	blockedTransactions.put(variable,t);
 			}
 		}
 		else{
@@ -135,7 +146,7 @@ public class TransactionManager {
 
 				block(variable,t,read,value,timestamp);
 
-				blockedTransactions.put(variable, t);
+				//blockedTransactions.put(variable, t);
 			}
 			if(s.equals(Status.GetLock)){
 				List<Site> list=varToSite.get(variable);
@@ -152,7 +163,7 @@ public class TransactionManager {
 				if(!wrote){
 					out.println("All sites with this variable("+variable+") are down-->");
 					block(variable,t,read,value,timestamp);
-					blockedTransactions.put(variable,t);
+					//blockedTransactions.put(variable,t);
 				}
 			}
 		}
@@ -267,7 +278,10 @@ public class TransactionManager {
 	}
 	
 	void fail(int site,int timestamp){
+		
+		//site lock map
 		sites.get(site).fail();
+		
 		System.out.println("fail"+site);
 	}
 	
