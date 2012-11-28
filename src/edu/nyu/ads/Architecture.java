@@ -13,8 +13,12 @@ public class Architecture {
 			String variableName="x"+i;
 			Variable v=new Variable(variableName,(i*10));
 			variables.put(variableName,v);
+			if(i%2==0){
+				v.setIsReplicated(true);
+			}
 			List<Site>list=new ArrayList<Site>();
 			varToSite.put(variableName, list);
+			
 		}
 		
 		for(int i=1;i<=10;i++){
