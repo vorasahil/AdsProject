@@ -33,6 +33,7 @@ public class Variable {
 	}
 	
 	void setValue(int value){
+		this.value=value;
 		return;
 	}
 	int getValue(){

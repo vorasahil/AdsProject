@@ -23,6 +23,7 @@ public class ReadOnlyTransaction extends Transaction {
 
 	@Override
 	Map<String, String> end(TransactionState s) {
+		this.state = s;
 		return null;
 	}
 

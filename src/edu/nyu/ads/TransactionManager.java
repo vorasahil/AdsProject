@@ -32,20 +32,18 @@ public class TransactionManager {
 		
 		if(blockedTransactions.containsKey(variable)){
 			List<Transaction> blockedTransaction=blockedTransactions.get(variable);
-			Transaction temp = blockedTransaction.get(blockedTransaction.size()-1);
 			
-			// Check if the current transaction is older than the last blocked one
-			if(t.getTimestamp()<temp.getTimestamp()){
-				blockedTransaction.add(t);
-				out.println("Transaction "+t.getName()+" BLOCKED ON "+variable+"at timestamp"+timestamp);
-				t.block(value, read);
-				out.println("Wait Die Protocol-->1");
+			for(Transaction temp: blockedTransaction){
+					if(!temp.isRead() && temp.getTimestamp()<t.getTimestamp()){
+							out.println("Transaction "+t.getName()+" aborted"+"at timestamp"+timestamp);
+							abort(t,timestamp);
+							return;
+					}
+				
 			}
 			
-			else{
-				out.println("Wait Die Protocol-->2");
-				abort(t,timestamp);
-			}
+			blockedTransaction.add(t);
+			out.println(t+" Blocked On "+variable+" at timestamp "+timestamp );
 		}
 		
 		else{
@@ -99,6 +97,7 @@ public class TransactionManager {
 		for(String v:variables){
 			if(!nonReplicatedVariables.contains(v)){
 				List<Transaction> blockedTransaction=blockedTransactions.get(v);
+				if(blockedTransaction!=null){
 				Transaction temp = blockedTransaction.remove(0);
 				if(blockedTransaction.size()==0)
 					blockedTransactions.remove(v);
@@ -109,6 +108,7 @@ public class TransactionManager {
 				}
 				else{
 					write(temp.getName(),v,map.get(false),timestamp);
+				}
 				}
 			}
 		}
@@ -214,11 +214,13 @@ public class TransactionManager {
 					Variable v=null;
 					try{
 						v=sit.readVariableBackup(var);	
+						
 					}
 					catch(IllegalStateException e){
 					continue;
 					}
-					variables.put(v.getName(),v);
+					Variable newVar = new Variable(v);
+					variables.put(newVar.getName(),newVar);
 					break FOR;
 				}
 				
@@ -238,6 +240,18 @@ public class TransactionManager {
 			for(Integer siteNum: sites.keySet()){
 				sites.get(siteNum).commit(transactions.get(s));
 			}
+		}
+		if(transactions.get(s).getType().equals(TransactionType.ReadOnly)){
+			transactions.get(s).end(TransactionState.Commited);
+			out.println("END transaction"+transactions.get(s));
+			return false;
+			
+		}
+		if(transactions.get(s).getState().equals(TransactionState.Aborted)){
+			transactions.get(s).end(TransactionState.Aborted);
+			out.println("END transaction"+transactions.get(s));
+			return false;
+			
 		}
 		Map<String, String> m=transactions.get(s).end(TransactionState.Commited);
 		Set<String> variables=m.keySet();
@@ -350,8 +364,53 @@ public class TransactionManager {
 	}
 	
 	void recover(int site,int timestamp){
-		sites.get(site).recover();
+		Site s = sites.get(site);
+		s.recover();
 		System.out.println("recover"+site);
+		boolean write = false;
+		Map<String,Variable> backupMap = s.getVariableBackup();
+		List<String> notReplicatedVariables = new ArrayList<String>();
+		for(Variable  v: backupMap.values()){
+			if(!v.isVariableReplicated()){
+				notReplicatedVariables.add(v.getName());
+			}
+		}
+		
+		for(String var:notReplicatedVariables){
+			List<Transaction> blockedTransactionList  =  blockedTransactions.get(var);
+			
+			if(blockedTransactionList != null){
+				List<Transaction> tempBlockedTransactionList = new ArrayList<Transaction>(blockedTransactionList);
+				for(Transaction blockedTransaction:  tempBlockedTransactionList){
+					if(blockedTransaction.getType().equals(TransactionType.ReadOnly)){
+						blockedTransaction.unblock();
+						blockedTransaction.read(var);
+						blockedTransactionList.remove(blockedTransaction);
+						out.println("ReadOnly Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+					}
+					else if(!write){
+						write = true;
+						Map<Boolean,Integer> map=blockedTransaction.unblock();
+						if(map.containsKey(true)){
+							//true means it was a read operation that it was blocked on.
+							read(blockedTransaction.getName(),var,timestamp);
+						}
+						else{
+							write(blockedTransaction.getName(),var,map.get(false),timestamp);
+						}
+						blockedTransactionList.remove(blockedTransaction);
+						out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+						
+					}
+				}
+				if(blockedTransactionList.isEmpty())
+					blockedTransactions.remove(var);
+			}
+			
+			
+		}
+		
+		
 	}
 	
 	void queryState(){

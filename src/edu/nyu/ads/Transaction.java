@@ -24,6 +24,51 @@ public abstract class Transaction {
 	}
 
 
+	public TransactionType getType() {
+		return type;
+	}
+
+
+	public void setType(TransactionType type) {
+		this.type = type;
+	}
+
+
+	public TransactionState getState() {
+		return state;
+	}
+
+
+	public void setState(TransactionState state) {
+		this.state = state;
+	}
+
+
+	public boolean isRead() {
+		return read;
+	}
+
+
+	public void setRead(boolean read) {
+		this.read = read;
+	}
+
+
+	public int getValue() {
+		return value;
+	}
+
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 	void block(int value, boolean read) {
 		// TODO Auto-generated method stub
 		this.state=TransactionState.Blocked;
