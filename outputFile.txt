@@ -1,6 +1,6 @@
+BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T1, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T2, type=ReadWrite, state=Active]
-BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
 Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.1 at timestamp 3
 Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.2 at timestamp 3
 Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.3 at timestamp 3
@@ -21,8 +21,10 @@ Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.7 
 Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.8 at timestamp 4
 Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.9 at timestamp 4
 Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.10 at timestamp 4
-Wait Die Protocol-->3 
-Transaction T3 aborting at timestamp 5
+Transaction [name=T3, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
+Transaction [name=T3, type=ReadWrite, state=Blocked] Blocked On x4 at timestamp 5
+Transaction [name=T3, type=ReadWrite, state=Blocked] READS variable x4.1 = 44at timestamp6
 END transactionTransaction [name=T2, type=ReadWrite, state=Commited]
-Transaction [name=T1, type=ReadWrite, state=Active] READS variable x2.1 = 20at timestamp7
+END transactionTransaction [name=T3, type=ReadWrite, state=Commited]
+Transaction [name=T1, type=ReadWrite, state=Active] READS variable x2.1 = 22at timestamp8
 END transactionTransaction [name=T1, type=ReadWrite, state=Commited]
