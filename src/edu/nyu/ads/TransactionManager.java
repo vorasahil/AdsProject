@@ -393,6 +393,7 @@ public class TransactionManager {
 		s.recover();
 		System.out.println("recover"+site);
 		boolean write = false;
+		boolean read = false;
 		Map<String,Variable> backupMap = s.getVariableBackup();
 		List<String> notReplicatedVariables = new ArrayList<String>();
 		for(Variable  v: backupMap.values()){
@@ -413,15 +414,16 @@ public class TransactionManager {
 						blockedTransactionList.remove(blockedTransaction);
 						out.println("ReadOnly Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
 					}
-					else if(!write){
-						write = true;
+					else {
 						Map<Boolean,Integer> map=blockedTransaction.unblock();
-						if(map.containsKey(true)){
+						if(map.containsKey(true) && !write){
 							//true means it was a read operation that it was blocked on.
 							read(blockedTransaction.getName(),var,timestamp);
+							read = true;
 						}
-						else{
+						else if(!read){
 							write(blockedTransaction.getName(),var,map.get(false),timestamp);
+							write = true;
 						}
 						blockedTransactionList.remove(blockedTransaction);
 						out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
