@@ -277,17 +277,42 @@ public class TransactionManager {
 	
 	boolean read(String transaction, String variable,int timestamp){
 		Transaction temp=transactions.get(transaction);
+		if(temp!=null){
 		if(temp.type.equals(TransactionType.ReadOnly)){
 			Integer value=temp.read(variable);
-			if(value==null)
-				out.println(transactions.get(transaction)+" waiting..");
-			else
+			if(value==null){
+				out.println(transactions.get(transaction).getTimestamp()+" waiting for variable"+variable);
+				List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
+				if(blockedTransactionsList == null){
+					blockedTransactionsList = new ArrayList<Transaction>();
+				}
+				blockedTransactionsList.add(temp);
+				return false;
+			}
+			List<Site> sitesList = varToSite.get(variable);
+			if(sitesList.size()==1 && !sitesList.get(0).isUp()){
+				out.println(transactions.get(transaction)+" waiting for variable"+variable);
+				List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
+			
+				if(blockedTransactionsList == null){
+					blockedTransactionsList = new ArrayList<Transaction>();
+				}
+				blockedTransactionsList.add(temp);
+				return false;
+				
+			}
+						
 			out.println("Transaction "+transactions.get(transaction)+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
 		}
 		else{
 			lock(variable,transactions.get(transaction),true,0,timestamp);
 		}
 		return true;
+		}
+		else{
+			out.println("Transaction"+ transaction+"is already aborted");
+			return false;
+		}
 	}
 	
 	
