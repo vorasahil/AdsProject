@@ -235,6 +235,12 @@ public class TransactionManager {
 	}
 	
 	boolean end(String s,int timestamp){
+		if(transactions.get(s).getState().equals(TransactionState.Aborted)){
+			transactions.get(s).end(TransactionState.Aborted);
+			out.println("Transaction "+transactions.get(s)+"already aborted");
+			return false;
+			
+		}
 		out.println("END transaction"+transactions.get(s));
 		if(transactions.containsKey(s)){
 			for(Integer siteNum: sites.keySet()){
@@ -247,12 +253,7 @@ public class TransactionManager {
 			return false;
 			
 		}
-		if(transactions.get(s).getState().equals(TransactionState.Aborted)){
-			transactions.get(s).end(TransactionState.Aborted);
-			out.println("END transaction"+transactions.get(s));
-			return false;
-			
-		}
+		
 		Map<String, String> m=transactions.get(s).end(TransactionState.Commited);
 		Set<String> variables=m.keySet();
 		for(String v:variables){
@@ -277,37 +278,44 @@ public class TransactionManager {
 	
 	boolean read(String transaction, String variable,int timestamp){
 		Transaction temp=transactions.get(transaction);
-		if(temp!=null){
-		if(temp.type.equals(TransactionType.ReadOnly)){
-			Integer value=temp.read(variable);
-			if(value==null){
-				out.println(transactions.get(transaction).getTimestamp()+" waiting for variable"+variable);
-				List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
-				if(blockedTransactionsList == null){
-					blockedTransactionsList = new ArrayList<Transaction>();
-				}
-				blockedTransactionsList.add(temp);
+		if(null==temp ||temp.getState().equals(TransactionState.Aborted))
+		{
+				out.println("Transaction "+transaction+" already aborted.");
 				return false;
-			}
-			List<Site> sitesList = varToSite.get(variable);
-			if(sitesList.size()==1 && !sitesList.get(0).isUp()){
-				out.println(transactions.get(transaction)+" waiting for variable"+variable);
-				List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
+		}
 			
-				if(blockedTransactionsList == null){
-					blockedTransactionsList = new ArrayList<Transaction>();
+		
+		if(temp!=null){
+			if(temp.type.equals(TransactionType.ReadOnly)){
+				Integer value=temp.read(variable);
+				if(value==null){
+					out.println(transactions.get(transaction).getTimestamp()+" waiting for variable"+variable);
+					List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
+					if(blockedTransactionsList == null){
+						blockedTransactionsList = new ArrayList<Transaction>();
+					}
+					blockedTransactionsList.add(temp);
+					return false;
 				}
-				blockedTransactionsList.add(temp);
-				return false;
-				
-			}
+				List<Site> sitesList = varToSite.get(variable);
+				if(sitesList.size()==1 && !sitesList.get(0).isUp()){
+					out.println(transactions.get(transaction)+" waiting for variable"+variable);
+					List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
+			
+					if(blockedTransactionsList == null){
+						blockedTransactionsList = new ArrayList<Transaction>();
+					}
+					blockedTransactionsList.add(temp);
+					return false;
+				}
 						
-			out.println("Transaction "+transactions.get(transaction)+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
-		}
-		else{
-			lock(variable,transactions.get(transaction),true,0,timestamp);
-		}
-		return true;
+				out.println("Transaction "+transactions.get(transaction)+" reads "+variable+" as "+value+" on timestamp= "+timestamp);
+				return true;
+			}
+			else{
+				lock(variable,transactions.get(transaction),true,0,timestamp);
+				return true;
+			}
 		}
 		else{
 			out.println("Transaction"+ transaction+"is already aborted");
@@ -318,6 +326,12 @@ public class TransactionManager {
 	
 	boolean write(String transaction, String variable, int value,int timestamp)
 	{
+		
+		if(null==transactions.get(transaction) || transactions.get(transaction).getState().equals(TransactionState.Aborted))
+		{
+				out.println("Transaction "+transaction+" already aborted.");
+				return false;
+		}
 		lock(variable,transactions.get(transaction),false,value,timestamp);
 		return true;
 	}
