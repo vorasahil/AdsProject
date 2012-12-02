@@ -235,7 +235,7 @@ public class TransactionManager {
 	}
 	
 	boolean end(String s,int timestamp){
-		System.out.println("end "+s);
+		out.println("END transaction"+transactions.get(s));
 		if(transactions.containsKey(s)){
 			for(Integer siteNum: sites.keySet()){
 				sites.get(siteNum).commit(transactions.get(s));
@@ -271,7 +271,7 @@ public class TransactionManager {
 				}
 			}
 		}
-		out.println("END transaction"+transactions.get(s));
+		
 		return false;
 	}
 	

@@ -1,10 +1,19 @@
 begin(T3)
 begin(T1)
 begin(T2)
+<<<<<<< HEAD
 W(T3,x2,22)
 W(T2,x4,44)
 R(T3,x4)
 end(T2)
 end(T3)
 R(T1,x2)
+=======
+W(T1,x6,66)
+fail(2)
+W(T2,x8,88); R(T2,x3)
+R(T1, x5)
+end(T2)
+recover(2)
+>>>>>>> d4bf5e185120a16a50c2e473be8f4340dfa972dd
 end(T1)
