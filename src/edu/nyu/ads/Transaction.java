@@ -77,6 +77,7 @@ public abstract class Transaction {
 	}
 
 	Map<Boolean,Integer>unblock(){
+		this.state = TransactionState.Active;
 		Map<Boolean,Integer> map=new HashMap<Boolean,Integer>();
 		map.put(read,value);
 		return map;

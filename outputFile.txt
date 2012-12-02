@@ -1,28 +1,27 @@
 BEGIN READWRITE Transaction [name=T1, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T2, type=ReadWrite, state=Active]
-BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.1 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.2 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.3 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.4 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.5 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.6 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.7 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.8 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.9 at timestamp 3
-Transaction [name=T3, type=ReadWrite, state=Active] WRITES 22 to  variable x2.10 at timestamp 3
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.1 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.2 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.3 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.4 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.5 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.6 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.7 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.8 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.9 at timestamp 4
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 44 to  variable x4.10 at timestamp 4
-Wait Die Protocol-->3 
-Transaction T3 aborting at timestamp 5
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.1 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.2 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.3 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.4 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.5 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.6 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.7 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.8 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.9 at timestamp 2
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 66 to  variable x6.10 at timestamp 2
+Transaction T1 aborting at timestamp 3
+failSite [siteNumber=2, variables={x6=Variable [name=x6, value=60, isReplicated=true], x4=Variable [name=x4, value=40, isReplicated=true], x2=Variable [name=x2, value=20, isReplicated=true], x1=Variable [name=x1, value=10, isReplicated=false], x8=Variable [name=x8, value=80, isReplicated=true], x20=Variable [name=x20, value=200, isReplicated=true], x10=Variable [name=x10, value=100, isReplicated=true], x16=Variable [name=x16, value=160, isReplicated=true], x18=Variable [name=x18, value=180, isReplicated=true], x12=Variable [name=x12, value=120, isReplicated=true], x11=Variable [name=x11, value=110, isReplicated=false], x14=Variable [name=x14, value=140, isReplicated=true]}, variablesBackup={x6=Variable [name=x6, value=60, isReplicated=true], x4=Variable [name=x4, value=40, isReplicated=true], x2=Variable [name=x2, value=20, isReplicated=true], x1=Variable [name=x1, value=10, isReplicated=false], x8=Variable [name=x8, value=80, isReplicated=true], x20=Variable [name=x20, value=200, isReplicated=true], x10=Variable [name=x10, value=100, isReplicated=true], x16=Variable [name=x16, value=160, isReplicated=true], x18=Variable [name=x18, value=180, isReplicated=true], x12=Variable [name=x12, value=120, isReplicated=true], x11=Variable [name=x11, value=110, isReplicated=false], x14=Variable [name=x14, value=140, isReplicated=true]}, lockTable={}, fail=true, isReadable={x8=false, x20=false, x10=false, x6=false, x16=false, x4=false, x18=false, x2=false, x12=false, x11=true, x14=false, x1=true}]
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.1 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.3 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.4 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.5 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.6 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.7 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.8 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.9 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] WRITES 88 to  variable x8.10 at timestamp 4
+Transaction [name=T2, type=ReadWrite, state=Active] READS variable x3.4 = 30at timestamp4
+Transaction [name=T1, type=ReadWrite, state=Aborted] READS variable x5.6 = 50at timestamp5
 END transactionTransaction [name=T2, type=ReadWrite, state=Commited]
-Transaction [name=T1, type=ReadWrite, state=Active] READS variable x2.1 = 20at timestamp7
-END transactionTransaction [name=T1, type=ReadWrite, state=Commited]
+END transactionTransaction [name=T1, type=ReadWrite, state=Aborted]
