@@ -32,6 +32,10 @@ public class TransactionManager {
 		
 		if(blockedTransactions.containsKey(variable)){
 			List<Transaction> blockedTransaction=blockedTransactions.get(variable);
+			if(blockedTransaction == null){
+				blockedTransaction = new ArrayList<Transaction>();
+				blockedTransactions.put(variable,blockedTransaction);
+			}
 			
 			for(Transaction temp: blockedTransaction){
 					if(!temp.isRead() && temp.getTimestamp()<t.getTimestamp()){
@@ -436,17 +440,21 @@ public class TransactionManager {
 					}
 					else {
 						Map<Boolean,Integer> map=blockedTransaction.unblock();
-						out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+						
 						if(map.containsKey(true) && !write){
 							//true means it was a read operation that it was blocked on.
 							read(blockedTransaction.getName(),var,timestamp);
 							read = true;
+							out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+							blockedTransactionList.remove(blockedTransaction);
 						}
 						else if(map.containsKey(false) && !read){
 							write(blockedTransaction.getName(),var,map.get(false),timestamp);
 							write = true;
+							out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+							blockedTransactionList.remove(blockedTransaction);
 						}
-						blockedTransactionList.remove(blockedTransaction);
+						
 						
 						
 					}
