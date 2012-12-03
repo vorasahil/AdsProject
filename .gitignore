@@ -122,6 +122,8 @@ UpgradeLog*.XML
 
 # Windows image file caches
 Thumbs.db
+input.txt
+output.txt
 
 # Folder config file
 Desktop.ini

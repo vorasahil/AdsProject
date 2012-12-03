@@ -296,7 +296,7 @@ public class TransactionManager {
 			if(temp.type.equals(TransactionType.ReadOnly)){
 				Integer value=temp.read(variable);
 				if(value==null){
-					out.println(transactions.get(transaction).getTimestamp()+" waiting for variable"+variable);
+					out.println(transactions.get(transaction).getName()+" waiting for variable"+variable);
 					List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
 					if(blockedTransactionsList == null){
 						blockedTransactionsList = new ArrayList<Transaction>();
@@ -448,7 +448,7 @@ public class TransactionManager {
 							out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
 							blockedTransactionList.remove(blockedTransaction);
 						}
-						else if(map.containsKey(false) && !read){
+						else if(map.containsKey(false) && !read && !write){
 							write(blockedTransaction.getName(),var,map.get(false),timestamp);
 							write = true;
 							out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
