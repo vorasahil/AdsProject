@@ -260,7 +260,7 @@ public class TransactionManager {
 			
 		}
 		transactions.get(s).end(TransactionState.Commited);
-		out.println("END transaction"+transactions.get(s));
+		out.println("END transaction "+transactions.get(s));
 		Map<String, String> m=transactions.get(s).end(TransactionState.Commited);
 		Set<String> variables=m.keySet();
 		for(String v:variables){
@@ -414,6 +414,46 @@ public class TransactionManager {
 	void recover(int site,int timestamp){
 		Site s = sites.get(site);
 		s.recover();
+		
+		//updating readonly Transactions not-replicated variables..
+		Set<ReadOnlyTransaction> trans=new HashSet<ReadOnlyTransaction>();
+		for(Transaction tr:transactions.values()){
+			if(tr.getType().equals(TransactionType.ReadOnly)){
+				trans.add((ReadOnlyTransaction) tr);
+			}
+		}
+		
+		if(trans.size()>=1){
+			Map<String,Variable> vars = s.getVariableBackup();
+			System.out.println(vars);
+			Set<Variable> nvars=new HashSet<Variable>();
+
+			for(Variable var:vars.values()){
+				if(!var.isVariableReplicated()){
+					nvars.add(var);
+				}
+			}
+		
+			if(nvars.size()>=1){
+				Iterator<Variable> vi=nvars.iterator();	
+				
+				while(vi.hasNext()){
+					Variable nonRVar=vi.next();
+					Iterator<ReadOnlyTransaction> ti=trans.iterator();
+					while(ti.hasNext()){
+						ReadOnlyTransaction tr=ti.next();
+						if(tr.read(nonRVar.getName())==null){
+							tr.addVar(nonRVar.getName(), new Variable(nonRVar));
+						}
+					}
+				}
+			}
+		}
+		
+		
+		
+		
+		
 		out.println("recover"+site);
 		boolean write = false;
 		boolean read = false;

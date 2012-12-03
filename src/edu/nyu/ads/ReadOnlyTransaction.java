@@ -20,6 +20,9 @@ public class ReadOnlyTransaction extends Transaction {
 		throw new UnsupportedOperationException("Read Only Transaction Cannot Write!");
 	}
 
+	void addVar(String variable,Variable v){
+		variables.put(variable, v);
+	}
 
 	@Override
 	Map<String, String> end(TransactionState s) {

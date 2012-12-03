@@ -1,26 +1,13 @@
 BEGIN READWRITE Transaction [name=T1, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T2, type=ReadWrite, state=Active]
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.1 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.2 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.3 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.4 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.5 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.6 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.7 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.8 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.9 at timestamp 2
-Transaction [name=T1, type=ReadWrite, state=Active] WRITES 1 to  variable x2.10 at timestamp 2
-Transaction T1 aborting at timestamp 3
-failSite [siteNumber=3, variables={x8=Variable [name=x8, value=80, isReplicated=true], x20=Variable [name=x20, value=200, isReplicated=true], x10=Variable [name=x10, value=100, isReplicated=true], x6=Variable [name=x6, value=60, isReplicated=true], x16=Variable [name=x16, value=160, isReplicated=true], x4=Variable [name=x4, value=40, isReplicated=true], x18=Variable [name=x18, value=180, isReplicated=true], x2=Variable [name=x2, value=20, isReplicated=true], x12=Variable [name=x12, value=120, isReplicated=true], x14=Variable [name=x14, value=140, isReplicated=true]}, variablesBackup={x8=Variable [name=x8, value=80, isReplicated=true], x20=Variable [name=x20, value=200, isReplicated=true], x10=Variable [name=x10, value=100, isReplicated=true], x6=Variable [name=x6, value=60, isReplicated=true], x16=Variable [name=x16, value=160, isReplicated=true], x4=Variable [name=x4, value=40, isReplicated=true], x18=Variable [name=x18, value=180, isReplicated=true], x2=Variable [name=x2, value=20, isReplicated=true], x12=Variable [name=x12, value=120, isReplicated=true], x14=Variable [name=x14, value=140, isReplicated=true]}, lockTable={}, fail=true, isReadable={x8=false, x20=false, x10=false, x6=false, x16=false, x4=false, x18=false, x2=false, x12=false, x14=false}]
-Transaction T1 already aborted.
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.1 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.2 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.4 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.5 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.6 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.7 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.8 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.9 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Active] WRITES 3 to  variable x10.10 at timestamp 5
-Transaction Transaction [name=T1, type=ReadWrite, state=Aborted]already aborted
-END transactionTransaction [name=T2, type=ReadWrite, state=Commited]
+BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
+BEGIN READWRITE Transaction [name=T4, type=ReadWrite, state=Active]
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 5 to  variable x1.2 at timestamp 4
+Transaction [name=T1, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
+Transaction [name=T1, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 5
+Transaction [name=T2, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
+Transaction [name=T2, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 6
+Transaction [name=T3, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
+Transaction [name=T3, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 7
+END transaction Transaction [name=T4, type=ReadWrite, state=Commited]
+Transaction [name=T1, type=ReadWrite, state=Active] READS variable x1.2 = 5at timestamp8
