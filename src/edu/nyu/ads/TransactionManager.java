@@ -43,12 +43,14 @@ public class TransactionManager {
 			}
 			
 			blockedTransaction.add(t);
+			t.block(value, read);
 			out.println(t+" Blocked On "+variable+" at timestamp "+timestamp );
 		}
 		
 		else{
 			ArrayList<Transaction>  newBlockedList =new ArrayList<Transaction>();
 			newBlockedList.add(t);
+			t.block(value, read);
 			blockedTransactions.put(variable,newBlockedList);
 			out.println(t+" Blocked On "+variable+" at timestamp "+timestamp );
 		}
@@ -241,7 +243,7 @@ public class TransactionManager {
 			return false;
 			
 		}
-		out.println("END transaction"+transactions.get(s));
+		
 		if(transactions.containsKey(s)){
 			for(Integer siteNum: sites.keySet()){
 				sites.get(siteNum).commit(transactions.get(s));
@@ -253,7 +255,8 @@ public class TransactionManager {
 			return false;
 			
 		}
-		
+		transactions.get(s).end(TransactionState.Commited);
+		out.println("END transaction"+transactions.get(s));
 		Map<String, String> m=transactions.get(s).end(TransactionState.Commited);
 		Set<String> variables=m.keySet();
 		for(String v:variables){
@@ -293,6 +296,7 @@ public class TransactionManager {
 					List<Transaction> blockedTransactionsList  = blockedTransactions.get(variable);  
 					if(blockedTransactionsList == null){
 						blockedTransactionsList = new ArrayList<Transaction>();
+						blockedTransactions.put(variable,blockedTransactionsList);
 					}
 					blockedTransactionsList.add(temp);
 					return false;
@@ -304,6 +308,7 @@ public class TransactionManager {
 			
 					if(blockedTransactionsList == null){
 						blockedTransactionsList = new ArrayList<Transaction>();
+						blockedTransactions.put(variable,blockedTransactionsList);
 					}
 					blockedTransactionsList.add(temp);
 					return false;
@@ -405,7 +410,7 @@ public class TransactionManager {
 	void recover(int site,int timestamp){
 		Site s = sites.get(site);
 		s.recover();
-		System.out.println("recover"+site);
+		out.println("recover"+site);
 		boolean write = false;
 		boolean read = false;
 		Map<String,Variable> backupMap = s.getVariableBackup();
@@ -427,20 +432,22 @@ public class TransactionManager {
 						blockedTransaction.read(var);
 						blockedTransactionList.remove(blockedTransaction);
 						out.println("ReadOnly Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+						read(blockedTransaction.getName(),var,timestamp);
 					}
 					else {
 						Map<Boolean,Integer> map=blockedTransaction.unblock();
+						out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
 						if(map.containsKey(true) && !write){
 							//true means it was a read operation that it was blocked on.
 							read(blockedTransaction.getName(),var,timestamp);
 							read = true;
 						}
-						else if(!read){
+						else if(map.containsKey(false) && !read){
 							write(blockedTransaction.getName(),var,map.get(false),timestamp);
 							write = true;
 						}
 						blockedTransactionList.remove(blockedTransaction);
-						out.println("ReadWrite Transaction"+blockedTransaction.getName()+"unblocked on"+var+"at timestamp"+timestamp);
+						
 						
 					}
 				}
