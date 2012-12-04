@@ -15,6 +15,8 @@ public abstract class Transaction {
 	TransactionState state;
 	boolean read;
 	int value;
+	boolean justUnblocked=false;
+	
 	
 	Transaction(String name,int timestamp,TransactionType type){
 		this.name=name;
@@ -23,7 +25,10 @@ public abstract class Transaction {
 		this.state=TransactionState.Active;
 	}
 
-
+	public boolean blockedOnRead(){
+		return this.read;
+	}
+	
 	public TransactionType getType() {
 		return type;
 	}
@@ -74,13 +79,19 @@ public abstract class Transaction {
 		this.state=TransactionState.Blocked;
 		this.value=value;
 		this.read=read;
+		this.justUnblocked=false;
 	}
 
 	Map<Boolean,Integer>unblock(){
 		this.state = TransactionState.Active;
 		Map<Boolean,Integer> map=new HashMap<Boolean,Integer>();
 		map.put(read,value);
+		this.justUnblocked=true;
 		return map;
+	}
+	
+	public boolean jusUnblocked(){
+		return this.justUnblocked;
 	}
 	
 	abstract Integer  read (String variable);

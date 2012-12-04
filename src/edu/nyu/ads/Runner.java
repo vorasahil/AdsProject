@@ -45,9 +45,17 @@ public class Runner {
 					 tm.dump(timestamp);
 				 }
 				 else if(text.startsWith("dump(x")){
-					 String x[]=text.split("\\(");
-					 String s=x[1].substring(0,x[1].length()-1);
-					 tm.dump(s,timestamp);
+					 if(!text.contains(".")){					 
+						 String x[]=text.split("\\(");
+						 String s=x[1].substring(0,x[1].length()-1);
+						 tm.dump(s,timestamp);
+					 }
+					 else{
+						 String x[]=text.split("\\(");
+						 String s[]=x[1].split("\\.");
+						 int site=Integer.parseInt(s[1].substring(0,s[1].length()-1));
+						 tm.dump(s[0],site,timestamp);
+					 }
 				 }
 				 
 				 else if(text.startsWith("dump(")){

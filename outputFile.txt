@@ -1,13 +1,41 @@
 BEGIN READWRITE Transaction [name=T1, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T2, type=ReadWrite, state=Active]
 BEGIN READWRITE Transaction [name=T3, type=ReadWrite, state=Active]
+Transaction [name=T1, type=ReadWrite, state=Active] WRITES 5 to  variable x1.2 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.1 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.2 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.3 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.4 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.5 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.6 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.7 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.8 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.9 at timestamp 3
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 32 to  variable x2.10 at timestamp 3
+Wait Die Protocol-->
+Transaction T2 aborting at timestamp 4
+END transaction Transaction [name=T1, type=ReadWrite, state=Commited]
 BEGIN READWRITE Transaction [name=T4, type=ReadWrite, state=Active]
-Transaction [name=T4, type=ReadWrite, state=Active] WRITES 5 to  variable x1.2 at timestamp 4
-Transaction [name=T1, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
-Transaction [name=T1, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 5
-Transaction [name=T2, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
-Transaction [name=T2, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 6
-Transaction [name=T3, type=ReadWrite, state=Blocked]is Blocked, could not get the locks but is older..
-Transaction [name=T3, type=ReadWrite, state=Blocked] Blocked On x1 at timestamp 7
-END transaction Transaction [name=T4, type=ReadWrite, state=Commited]
-Transaction [name=T1, type=ReadWrite, state=Active] READS variable x1.2 = 5at timestamp8
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.1 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.2 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.3 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.4 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.5 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.6 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.7 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.8 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.9 at timestamp 6
+Transaction [name=T4, type=ReadWrite, state=Active] WRITES 35 to  variable x4.10 at timestamp 6
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 21 to  variable x5.6 at timestamp 6
+Wait Die Protocol-->
+Transaction T4 aborting at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.1 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.2 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.3 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.4 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.5 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.6 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.7 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.8 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.9 at timestamp 7
+Transaction [name=T3, type=ReadWrite, state=Active] WRITES 23 to  variable x4.10 at timestamp 7

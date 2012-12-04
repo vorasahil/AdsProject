@@ -1,10 +1,11 @@
 package edu.nyu.ads;
+
 import java.io.IOException;
 import java.util.*;
 public class Architecture {
 	LockManager lockManager=new LockManager();
 	
-	void initialize() throws IOException{
+	void initialize(String input,String output) throws IOException{
 		Map<String,List<Site>> varToSite=new HashMap<String,List<Site>>();
 		Map<Integer,Site> sites=new HashMap<Integer,Site>();
 		Map<String,Variable> variables=new HashMap<String,Variable>();
@@ -60,13 +61,21 @@ public class Architecture {
 			}
 		}
 		
+		//Runner r=new Runner(input,varToSite,sites,lockManager,output);
+		
 		Runner r=new Runner("input.txt",varToSite,sites,lockManager,"outputFile.txt");
 		r.run();
 		
 	}
 	
 	public static void main(String args[])throws Exception{
-		new Architecture().initialize();
+		Scanner k=new Scanner(System.in);
+		System.out.println("Please enter the input file");
+		String input=k.nextLine();
+
+		System.out.println("Please enter the output file");
+		String output=k.nextLine();
+		new Architecture().initialize(input,output);
 
 	}
 }
