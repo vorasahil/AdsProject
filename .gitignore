@@ -124,6 +124,7 @@ UpgradeLog*.XML
 Thumbs.db
 input.txt
 output.txt
+output2.txt
 
 # Folder config file
 Desktop.ini
